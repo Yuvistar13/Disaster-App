@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "262320013926",
+    "project_id": "disaster-app-135b5",
+    "storage_bucket": "disaster-app-135b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:262320013926:android:f0374b28ec3a85ab5f63a7",
+        "android_client_info": {
+          "package_name": "com.ygherra.disasterapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh_RboF92AojySQG3x0cC0ZIbMz6E9Ya8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
