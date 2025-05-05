@@ -25,15 +25,13 @@ const capitalizeWords = (str) => {
   return str.replace(/\b\w/g, char => char.toUpperCase());
 };
 
-// Move API key to an environment variable in a real app
 const API_KEY = "bcae35948e7ca89c4ad35f3e4122eec1"; 
 
 const WeatherScreen = () => {
   const [location, setLocation] = useState(null);
   const [weatherData, setWeatherData] = useState({});
-  const [activeLayer, setActiveLayer] = useState("temp_new"); // Default to temperature layer
+  const [activeLayer, setActiveLayer] = useState("temp_new");
   
-  // Available weather layers
   const weatherLayers = {
     temp_new: "Temperature",
     precipitation_new: "Precipitation",

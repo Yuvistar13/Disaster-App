@@ -42,7 +42,6 @@ class Volunteer(models.Model):
     availability = models.BooleanField(default=True)
     task = models.CharField(max_length=100, blank=True, null=True)
    
-    # Remove the default lambda and make the field nullable
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -51,19 +50,17 @@ class Volunteer(models.Model):
     )
     
     def save(self, *args, **kwargs):
-        # If no user is provided, create one before saving
         if not self.user:
-            # Create a unique username based on name and timestamp
+
             import time
             timestamp = int(time.time())
             username = f"{self.name.lower().replace(' ', '_')}_{timestamp}"
             
-            # Create a default user with the volunteer's phone number
             self.user = User.objects.create(
                 phone_number=self.phone_number,
                 name=self.name,
                 username=username,
-                password=f"default_{timestamp}"  # Not secure, should be changed immediately
+                password=f"default_{timestamp}"  
             )
         super().save(*args, **kwargs)
 
@@ -82,7 +79,7 @@ class OTP(models.Model):
         return f"OTP for {self.phone_number}"
     
     def is_valid(self):
-        # Check if the OTP has expired
+
         return timezone.now() < self.expiry_time
     
     @classmethod
@@ -90,7 +87,6 @@ class OTP(models.Model):
         otp_code = ''.join(random.choices(string.digits, k=6))
         expiry_time = timezone.now() + timezone.timedelta(minutes=expiry_minutes)
         
-        # Get or create OTP object
         otp, created = cls.objects.update_or_create(
             phone_number=phone_number,
             defaults={

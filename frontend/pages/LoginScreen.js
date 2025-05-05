@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { View, Text, SafeAreaView, StyleSheet, Pressable, Modal, TextInput, Switch, Alert, ActivityIndicator } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OTPVerificationScreen from "./OTPVerificationScreen";
-import { syncUserWithFirebase } from '../firebase'; // Import the firebase sync function
+import { syncUserWithFirebase } from '../firebase'; 
+import API_URL from "./API_URL";
 
 const LoginScreen = ({ navigation }) => {
     const [registerModalVisible, setRegisterModalVisible] = useState(false);
@@ -25,13 +26,11 @@ const LoginScreen = ({ navigation }) => {
         password: '',
     });
 
-    // Check if user is already logged in on component mount
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
                 const token = await AsyncStorage.getItem('accessToken');
                 if (token) {
-                    // User is already logged in
                     navigation.navigate('Main');
                 }
             } catch (error) {
@@ -44,7 +43,7 @@ const LoginScreen = ({ navigation }) => {
 
     const createUser = async () => {
         try {
-            const response = await fetch('http://192.168.0.67:8000/api/create_user/', {
+            const response = await fetch(`${API_URL}/api/create_user/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,7 +84,7 @@ const LoginScreen = ({ navigation }) => {
 
     const checkUserExists = async (phoneNumber) => {
         try {
-            const response = await fetch('http://192.168.0.67:8000/api/check_user/', {
+            const response = await fetch(`${API_URL}/api/check_user/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -107,19 +106,17 @@ const LoginScreen = ({ navigation }) => {
         }
         
         setIsLoading(true);
-        
-        // Check if user exists and is verified
+
         const exists = await checkUserExists(newUser.phone_number);
         
         if (exists) {
-            // If phone exists, directly create volunteer (backend will handle verification check)
+
             const result = await createUser();
             
             if (result.success) {
                 setRegisterModalVisible(false);
                 Alert.alert("Success", "You've been registered!");
 
-                // Auto-login after successful registration
                 await handleLogin(true);
             } else {
                 if (result.error === 'User not verified') {
@@ -153,8 +150,7 @@ const LoginScreen = ({ navigation }) => {
                     is_verified: false,
                 });
                 Alert.alert("Success", "You've been verified and registered!");
-                
-                // Auto-login after successful verification
+
                 await handleLogin(true);
             } else {
                 Alert.alert("Error", result.error || "Failed to register after verification");
@@ -168,7 +164,6 @@ const LoginScreen = ({ navigation }) => {
     };
 
     const handleLogin = async (isAutoLogin = false) => {
-        // If auto-login after registration, use newUser credentials
         const credentials = isAutoLogin ? {
             username: newUser.username,
             password: newUser.password
@@ -182,8 +177,7 @@ const LoginScreen = ({ navigation }) => {
         setIsLoading(true);
         
         try {
-            // First try the custom login endpoint
-            const response = await fetch('http://192.168.0.67:8000/api/login/', {
+            const response = await fetch(`${API_URL}/api/login/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -195,21 +189,17 @@ const LoginScreen = ({ navigation }) => {
                 const data = await response.json();
                 console.log("Login response:", data);
                 
-                // If the response has tokens, use them
                 if (data.access && data.refresh) {
                     await storeUserData(data);
                     
-                    // Sync with Firebase after successful login
                     await syncUserWithFirebase();
                     
                     navigateAfterLogin();
                 } 
-                // If the login was successful but no tokens, try the JWT endpoint
                 else {
                     await getJWTToken(credentials);
                 }
             } else {
-                // If custom login fails, try JWT endpoint
                 await getJWTToken(credentials);
             }
         } catch (error) {
@@ -222,7 +212,7 @@ const LoginScreen = ({ navigation }) => {
 
     const getJWTToken = async (credentials) => {
         try {
-            const response = await fetch('http://192.168.0.67:8000/api/token/', {
+            const response = await fetch(`${API_URL}/api/token/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -233,7 +223,6 @@ const LoginScreen = ({ navigation }) => {
             const data = await response.json();
             
             if (response.ok) {
-                // Get user data to store with tokens
                 await getUserData(credentials.username, data);
             } else {
                 Alert.alert("Error", data.detail || "Login failed");
@@ -245,17 +234,13 @@ const LoginScreen = ({ navigation }) => {
     };
 
     const getUserData = async (username, tokenData) => {
-        // You would ideally have an endpoint to get user data by username
-        // For now, we'll use a simplified approach
+
         try {
-            // Store token data
             await storeUserData({
                 ...tokenData,
                 username: username,
-                // Add other default user data here if needed
             });
-            
-            // Sync with Firebase after getting user data
+
             await syncUserWithFirebase();
             
             navigateAfterLogin();
@@ -267,15 +252,13 @@ const LoginScreen = ({ navigation }) => {
 
     const storeUserData = async (data) => {
         try {
-            // Store access and refresh tokens
             if (data.access) {
                 await AsyncStorage.setItem('accessToken', data.access);
             }
             if (data.refresh) {
                 await AsyncStorage.setItem('refreshToken', data.refresh);
             }
-            
-            // Store user data
+
             const userData = {
                 id: data.id,
                 name: data.name || data.username,
@@ -292,13 +275,11 @@ const LoginScreen = ({ navigation }) => {
     };
 
     const navigateAfterLogin = () => {
-        // Close modals if open
         setLoginModalVisible(false);
         setRegisterModalVisible(false);
         
         Alert.alert("Success", "Login successful!");
         
-        // Navigate to main screen
         navigation.navigate('Main');
     };
 

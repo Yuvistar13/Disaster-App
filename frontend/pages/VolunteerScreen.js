@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, FlatList, Pressable, Modal, Switch, Alert } from 'react-native';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_URL from './API_URL';
 
 const VolunteerCopyScreen = () => {
     const [currentLocation, setCurrentLocation] = useState(null);
@@ -39,7 +40,7 @@ const VolunteerCopyScreen = () => {
 
         const fetchVolunteers = async () => {
             try {
-                const response = await fetch('http://192.168.0.67:8000/api/volunteers/', {
+                const response = await fetch(`${API_URL}/api/volunteers/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -63,10 +64,10 @@ const VolunteerCopyScreen = () => {
 
             const volunteerData = {
                 ...newVolunteer,
-                location: currentLocation ? `${currentLocation.latitude},${currentLocation.longitude}` : '', // or better format if needed
+                location: currentLocation ? `${currentLocation.latitude},${currentLocation.longitude}` : '', 
             };
             
-            const response = await fetch('http://192.168.0.67:8000/api/volunteers/create/', {
+            const response = await fetch(`${API_URL}/api/volunteers/create/`, {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
@@ -80,6 +81,8 @@ const VolunteerCopyScreen = () => {
             if (!response.ok) {
                 Alert.alert("You have already registered as a volunteer!");
             }
+
+            Alert.alert("You have successfully registered as a volunteer!");
 
             console.log("Volunteer created:", data);
             setModalVisible(false);
@@ -124,7 +127,7 @@ const VolunteerCopyScreen = () => {
                 return;
             }
     
-            const response = await fetch(`http://192.168.0.67:8000/api/volunteers/remove/${volunteer.id}/`, {
+            const response = await fetch(`${API_URL}/api/volunteers/remove/${volunteer.id}/`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -133,6 +136,9 @@ const VolunteerCopyScreen = () => {
     
             if (response.ok) {
                 Alert.alert("You have been removed as a volunteer.");
+                setVolunteers(prev => ({
+                    Volunteers: prev?.Volunteers?.filter(v => v.id !== volunteer.id)
+                  }));
             } else {
                 Alert.alert("Failed to remove volunteer.");
             }

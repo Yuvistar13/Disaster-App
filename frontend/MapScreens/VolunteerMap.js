@@ -4,6 +4,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { useState, useEffect} from 'react';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_URL from '../pages/API_URL';
 
 export default function VolunteerMap() {
 
@@ -36,7 +37,7 @@ export default function VolunteerMap() {
 
       const fetchVolunteers = async () => {
           try {
-              const response = await fetch('http://192.168.0.67:8000/api/volunteers/',{
+              const response = await fetch(`${API_URL}/api/volunteers/`,{
                   method: 'GET',
                   headers: {
                       'Content-Type': 'application/json',

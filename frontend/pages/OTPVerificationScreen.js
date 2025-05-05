@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
+import API_URL from './API_URL';
 
 const OTPVerificationScreen = ({ phoneNumber, onVerificationComplete, onCancel }) => {
   const [otp, setOtp] = useState('');
@@ -9,7 +10,7 @@ const OTPVerificationScreen = ({ phoneNumber, onVerificationComplete, onCancel }
   const sendOTP = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://192.168.0.67:8000/api/send_otp/', {
+      const response = await fetch(`${API_URL}/api/send_otp/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ const OTPVerificationScreen = ({ phoneNumber, onVerificationComplete, onCancel }
 
     try {
       setIsLoading(true);
-      const response = await fetch('http://192.168.0.67:8000/api/verify_otp/', {
+      const response = await fetch(`${API_URL}/api/verify_otp/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

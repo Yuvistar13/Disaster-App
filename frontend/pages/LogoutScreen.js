@@ -3,14 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } fr
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
+import API_URL from './API_URL'
 
 const LogoutScreen = () => {
   const navigation = useNavigation();
   const [userName, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load user data when component mounts
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
@@ -48,13 +47,13 @@ const LogoutScreen = () => {
   const fetchLogout = async () => {
     setIsLoading(true);
     try {
-      // Get refresh token
+
       const refreshToken = await AsyncStorage.getItem('refreshToken');
       const accessToken = await AsyncStorage.getItem('accessToken');
       
       if (refreshToken && accessToken) {
 
-        const response = await fetch('http://192.168.0.67:8000/api/logout_user/',{
+        const response = await fetch(`${API_URL}/api/logout_user/`,{
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${accessToken}`,
@@ -63,12 +62,10 @@ const LogoutScreen = () => {
         });        
       }
 
-      // Clear all stored tokens and user data regardless of server response
       await AsyncStorage.removeItem('accessToken');
       await AsyncStorage.removeItem('refreshToken');
       await AsyncStorage.removeItem('userData');
-      
-      // Navigate back to login screen
+
       navigation.reset({
         index: 0,
         routes: [{ name: 'Login' }],
@@ -76,7 +73,6 @@ const LogoutScreen = () => {
     } catch (error) {
       console.error('Error during logout:', error);
       
-      // Even if the server request fails, we should still log out locally
       await AsyncStorage.removeItem('accessToken');
       await AsyncStorage.removeItem('refreshToken');
       await AsyncStorage.removeItem('userData');
