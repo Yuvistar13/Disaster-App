@@ -36,7 +36,7 @@ npm start
 
 Once the Expo application has started, scan the QR code with the **Expo Go** app.
 
-**Note:**Ensure that **Expo Go** with **SDK 52** is installed. The codebase is incompatible with SDK 53 (released on 30/04/25), so you need to downgrade to the older APK.
+**Note:** Ensure that **Expo Go** with **SDK 52** is installed. The codebase is incompatible with SDK 53 (released on 30/04/25), so you need to downgrade to the older APK.
 
 ---
 
