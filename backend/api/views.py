@@ -103,7 +103,6 @@ def login_user(request):
         return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-
         user = User.objects.get(username=username, password=password)
 
         refresh = RefreshToken.for_user(user)
