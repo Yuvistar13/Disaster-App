@@ -51,7 +51,7 @@ A superuser has already been created with the following credentials:
 - You must log in to the Django admin panel before launching the application on Expo Go.
 
 ### API Configuration
-In the file `frontend/pages/API_URL.js`, update the IP address in the URL to match the device's IP address. This IP address can be found before the application is loaded in Expo Go. Also update the allowed hosts in the settings.py file with your IP address.
+In the file `frontend/pages/API_URL.js`, update the IP address in the URL to match the device's IP address. This IP address can be found before the application is loaded in Expo Go. Also update the allowed hosts in the `backend/backend/settings.py` file with your IP address.
 
 **Note:** The Twilio OTP notification system has not been implemented. To complete the registration process, you will need to check the OTP codes for the entered phone numbers directly in the Django admin panel and submit them manually.
 ---
